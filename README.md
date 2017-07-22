@@ -8,6 +8,15 @@
     * [Hello world et VitualHost](#hello-world--et-virutalhost)
 ## Contexte
 Création d'un site e-commerce, avec gestion des produits et commandes.
+## Déroulement de la formation
+| N° |        Description       | Durée |
+|:--:|:------------------------:|:-----:|
+|  1 | Initialisation du projet |  1h15 |
+|  2 |  Analyse et intégration  |  2h00 |
+|  3 |   Gestion des produits   |  2h00 |
+|  4 |    Prise de commandes    |  2h00 |
+|  5 |    Aller plus loin...    |  2h00 |
+|  6 |       Mise en ligne      |  0h45 |
 ## Pré-requis
 * Linux
 * Php
