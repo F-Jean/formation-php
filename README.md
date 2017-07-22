@@ -1,4 +1,4 @@
-# Formation PHP
+# Formation PHP avancée en 10 heures
 ## Sommaire
 * [Context](#contexte)
 * [Pré-requis](#pré-requis)
