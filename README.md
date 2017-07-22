@@ -3,14 +3,14 @@
 |  N° |                                   Description                                  | Durée |
 |:---:|:------------------------------------------------------------------------------:|:-----:|
 |  1  | [Session N°1 : Initialisation du projet](#session-n1--mise-en-place-du-projet) |  1h15 |
-| 1-1 |                         [Git et Github](#git-et-github)                        |   -   |
-| 1-2 |                              [Composer](#composer)                             |   -   |
-| 1-3 |            [Hello world et VitualHost](#hello-world--et-virutalhost)           |   -   |
-|  2  |                             Analyse et intégration                             |  2h00 |
-|  3  |                              Gestion des produits                              |  0h45 |
-|  4  |                               Prise de commandes                               |  2h00 |
-|  5  |                               Aller plus loin...                               |  2h00 |
-|  6  |                                  Mise en ligne                                 |  0h45 |
+| 1-1 | [Git et Github](#git-et-github)                                                |   -   |
+| 1-2 | [Composer](#composer)                                                          |   -   |
+| 1-3 | [Hello world et VitualHost](#hello-world--et-virutalhost)                      |   -   |
+|  2  | Analyse et intégration                                                         |  2h00 |
+|  3  | Gestion des produits                                                           |  0h45 |
+|  4  | Prise de commandes                                                             |  2h00 |
+|  5  | Aller plus loin...                                                             |  2h00 |
+|  6  | Mise en ligne                                                                  |  0h45 |
 ## Contexte
 Création d'un site e-commerce, avec gestion des produits et commandes.
 ## Pré-requis
