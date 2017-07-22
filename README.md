@@ -1,4 +1,11 @@
 # Formation PHP
+## Sommaire
+* [Context](#contexte)
+* [Pré-requis](#pré-requis)
+* [Session N°1](#session-n1--mise-en-place-du-projet)
+    * [Git et Github](#git-et-github)
+    * [Composer](#composer)
+    * [Hello world et VitualHost](#hello-world--et-virutalhost)
 ## Contexte
 Création d'un site e-commerce, avec gestion des produits et commandes.
 ## Pré-requis
@@ -59,8 +66,8 @@ Vous devez maintenant basculer sur la branche `master` et récupérer les modifi
 git checkout master
 git pull origin master
 ```
-## Composer
-### Initialisation
+### Composer
+#### Initialisation
 Maintenant que nous avons effectué notre premier commit, jouer un peu les notions d'issues et de pull request, on va maintenant s'attarder sur l'initialisation de composer. 
 
 *Vous devez au préalable avoir installer [composer](https://getcomposer.org/download/).*
@@ -97,7 +104,7 @@ Would you like to define your dev dependencies (require-dev) interactively [yes]
 Do you confirm generation [yes]? 
 Would you like the vendor directory added to your .gitignore [yes]?
 ```
-### Installation des dépendances
+#### Installation des dépendances
 Voici la liste des librairies que nous allons utiliser pour notre projet *(je reviendrai sur l'utilisation de chacun d'elles plus tard)* :
 ```
 composer require symfony/routing
@@ -108,7 +115,7 @@ composer require twig/twig
 composer require doctrine/orm
 ```
 La commande de composer `require` permet d'installer facilement les dépendances (librairies) et de les placer dans le dossier `vendor`.
-### Autoload
+#### Autoload
 Maintenant que nous avons installé les dépendances, on va maintenant créer la structure de notre projet, et cela passe par la création de l'arborescence mais aussi dela gestion de l'`autoload` facilité par `composer`.
 ```
 mkdir app
@@ -177,7 +184,7 @@ On va surtout se concentrer sur 2 choses :
 * `'' => array($baseDir . '/src'),`
 Ces lignes parlent pour elles même, on comprend de suite que selon le prefixe, ce dernier pointe sur un répertoire en particulier.
 
-## Hello world ! et VirutalHost
+### Hello world ! et VirutalHost
 
 Vous l'aurez compris, on va faire notre premier `Hello world !`. Pour cela on crée un fichier PHP qui se trouvera dans le dossier `web` :
 ```php
