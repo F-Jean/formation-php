@@ -1,30 +1,25 @@
 # Formation PHP avancée en 10 heures
-## Sommaire
-* [Context](#contexte)
-* [Pré-requis](#pré-requis)
-* [Session N°1](#session-n1--mise-en-place-du-projet)
-    * [Git et Github](#git-et-github)
-    * [Composer](#composer)
-    * [Hello world et VitualHost](#hello-world--et-virutalhost)
+## Sommaire et déroulement de la formation
+|  N° |                                   Description                                  | Durée |
+|:---:|:------------------------------------------------------------------------------:|:-----:|
+|  1  | [Session N°1 : Initialisation du projet](#session-n1--mise-en-place-du-projet) |  1h15 |
+| 1-1 |                         [Git et Github](#git-et-github)                        |   -   |
+| 1-2 |                              [Composer](#composer)                             |   -   |
+| 1-3 |            [Hello world et VitualHost](#hello-world--et-virutalhost)           |   -   |
+|  2  |                             Analyse et intégration                             |  2h00 |
+|  3  |                              Gestion des produits                              |  0h45 |
+|  4  |                               Prise de commandes                               |  2h00 |
+|  5  |                               Aller plus loin...                               |  2h00 |
+|  6  |                                  Mise en ligne                                 |  0h45 |
 ## Contexte
 Création d'un site e-commerce, avec gestion des produits et commandes.
-## Déroulement de la formation
-| N° |        Description       | Durée |
-|:--:|:------------------------:|:-----:|
-|  1 | Initialisation du projet |  1h15 |
-|  2 |  Analyse et intégration  |  2h00 |
-|  3 |   Gestion des produits   |  2h00 |
-|  4 |    Prise de commandes    |  2h00 |
-|  5 |    Aller plus loin...    |  2h00 |
-|  6 |       Mise en ligne      |  0h45 |
 ## Pré-requis
 * Linux
 * Php
 * MySQL
 * Git/Github
 * Bootstrap
-## Session N°1 : Mise en place du projet
-<sub><sup>(environ 1h30)</sup></sub>
+## Session N°1 : Initialisation du projet
 ### Git et Github
 * Création d'un nouveau repository sur [github](http://github.com)
 * Création du répertoire du projet `mkdir e-boutik`, suivi d'un `cd e-boutik` pour se rendre dans le répertoire
@@ -253,4 +248,8 @@ ff02::2 ip6-allrouters
 ```
 
 On termine par relancer `apache` avec la commande suivante : `sudo service apache2 reload` et normalement en allant sur [l'url de votre application](http://e-boutik.dev) vous devirez voir notre `Hello world !`, sinon c'est que vous avez loupé une étape.
-
+## Session N°2 : Analyse et intégration
+## Session N°3 : Gestion des produits
+## Session N°4 : Prise de commandes
+## Session N°5 : Aller plus loin...
+## Session N°6 : Mise en ligne
