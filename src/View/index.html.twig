@@ -1,0 +1,15 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}{{ parent() }} - Page d'accueil{% endblock %}
+
+{% block content %}
+    {% for nombre in nombres %}
+        {{ nombre }}<br/>
+    {% endfor %}
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        h1 {color:red;}
+    </style>
+{% endblock %}

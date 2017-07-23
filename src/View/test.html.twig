@@ -1,0 +1,20 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}{{ parent() }} - Test{% endblock %}
+
+{% block content %}
+    <form method="post">
+        <input type="text" name="username"/>
+        <input type="password" name="password"/>
+        <input type="text" name="email"/>
+        <input type="text" name="firstname"/>
+        <input type="text" name="lastname"/>
+        <input type="submit" value="Valider"/>
+    </form>
+    <ul>
+        {% for user in users %}
+            <li>{{ user.firstname }}</li>
+        {% endfor %}
+    </ul>
+    Bonjour {{ user.firstname }}
+{% endblock %}
