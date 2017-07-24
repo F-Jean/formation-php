@@ -38,13 +38,20 @@ class Controller
             'cache' => false,
         ));
 
+        $this->twig->addFunction(new \Twig_SimpleFunction('asset', function ($asset){
+            // Gérer la notion de version
+            return $asset;
+        }));
+
         $dbParams = array(
             'driver'   => 'pdo_mysql',
             'user'     => "root",
             'password' => "9wf23r2",
             'dbname'   => "formation-php",
+            'charset'  => 'utf8',
         );
-        $config = Setup::createAnnotationMetadataConfiguration([__DIR__."/../src/Entity"], false);
+        $config = Setup::createAnnotationMetadataConfiguration([__DIR__."/../src/Entity"], false, __DIR__."/../web/cache");
+        $config->setAutoGenerateProxyClasses(true);
         $this->doctrine = EntityManager::create($dbParams, $config);
     }
 
@@ -61,7 +68,7 @@ class Controller
      * @param $data
      * @return Response
      */
-    protected function render($filename, $data)
+    protected function render($filename, $data = [])
     {
         $template = $this->twig->load($filename);
         return new Response($template->render($data));

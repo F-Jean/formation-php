@@ -1,0 +1,34 @@
+{% extends 'without_sidebar.html.twig' %}
+
+{% block title %}{{ parent() }} - Gestion des catégories{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="jumbotron">
+            <h1>Gestion des catégories</h1>
+            <p>Ajoute, modifie ou supprime des catégories.</p>
+            <p><a class="btn btn-primary btn-lg" href="/category/add" role="button">Ajouter une nouvelle catégorie</a></p>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nom</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                    <tr>
+                        <td>{{ category.id }}</td>
+                        <td>{{ category.name }}</td>
+                        <td>
+                            <a class="btn btn-primary" href="/category/update/{{ category.id }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                            <a class="btn btn-primary" href="/category/delete/{{ category.id }}"><span class="glyphicon glyphicon-remove"></span></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

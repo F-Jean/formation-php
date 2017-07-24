@@ -37,11 +37,20 @@ class Kernel
             $request = Request::createFromGlobals();
             $requestStack = new RequestStack();
             $routes = new RouteCollection();
-            $routes->add("test", new Route("/test", [
-                "_controller" => "Controller\DefaultController::testAction"
-            ]));
-            $routes->add("index", new Route("/{loop}", [
+            $routes->add("test", new Route("/", [
                 "_controller" => "Controller\DefaultController::indexAction"
+            ]));
+            $routes->add("category_list", new Route("/category/list", [
+                "_controller" => "Controller\CategoryController::listAction"
+            ]));
+            $routes->add("category_add", new Route("/category/add", [
+                "_controller" => "Controller\CategoryController::addAction"
+            ]));
+            $routes->add("category_update", new Route("/category/update/{id}", [
+                "_controller" => "Controller\CategoryController::updateAction"
+            ]));
+            $routes->add("category_delete", new Route("/category/delete/{id}", [
+                "_controller" => "Controller\CategoryController::deleteAction"
             ]));
             $context = new RequestContext();
             $matcher = new UrlMatcher($routes, $context);
