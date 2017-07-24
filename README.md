@@ -6,7 +6,10 @@
 | 1-1 | [Git et Github](#git-et-github)                                                |   -   |
 | 1-2 | [Composer](#composer)                                                          |   -   |
 | 1-3 | [Hello world et VitualHost](#hello-world--et-virutalhost)                      |   -   |
-|  2  | Analyse et intégration                                                         |  2h00 |
+|  2  | [Session N°2 : Analyse et intégration](#session-n2--analyse-et-integration)    |  2h00 |
+| 2-1 | [Kernel](#kernel)                                                              |   -   |
+| 2-2 | [Controleur frontal](#controleur-frontal)                                      |   -   |
+| 2-3 | [Notre premier controleur](#notre-premier-controleur)                          |   -   |
 |  3  | Gestion des produits                                                           |  0h45 |
 |  4  | Prise de commandes                                                             |  2h00 |
 |  5  | Aller plus loin...                                                             |  2h00 |
@@ -249,6 +252,353 @@ ff02::2 ip6-allrouters
 
 On termine par relancer `apache` avec la commande suivante : `sudo service apache2 reload` et normalement en allant sur [l'url de votre application](http://e-boutik.dev) vous devirez voir notre `Hello world !`, sinon c'est que vous avez loupé une étape.
 ## Session N°2 : Analyse et intégration
+### Kernel
+La classe `Kernel` est le centre névralgique du framekwork, sont boulot est de faire correspondre une requête HTTP à une action d'un controleur, et de renvoyer une réponse.
+
+Nous utiliserons les composants phares de Symfony : 
+* `Routing`
+* `HttpFoundation`
+* `HttpKernel`
+
+L'association de ces trois composant permet de gérer notre problématique très simplement en une vingtaine de ligne.
+
+Nous allons détailler ligne par ligne le fonctionnement du `Kernel` :
+
+```php
+$request = Request::createFromGlobals();
+```
+Cette méthode statique renvoie un objet hydraté `Request`, basé sur les [variables superglobales PHP](http://php.net/manual/fr/language.variables.superglobals.php). Cette objet `Request` nous servira pour plus tard, lorsque l'on voudra faire correspondre une route à une action d'un controleur.
+
+```php
+$requestStack = new RequestStack();
+```
+L'objet `RequestStack` est un service, à l'inverse `Request` est simplement un objet de valeur, c'est simplement une façade de notre variables superglobales, il est d'ailleurs assez proche du patron de concaption `Facade`. Par conséquent, nous utiliserons `RequestStack` pour être en accord avec l'injection de dépendance (encore un autre patron de conception).
+
+```php
+$routes = new RouteCollection();
+$routes->add("test", new Route("/test", [
+  "_controller" => "Controller\DefaultController::testAction"
+]));
+$routes->add("index", new Route("/{loop}", [
+  "_controller" => "Controller\DefaultController::indexAction"
+]));
+```
+Les lignes précédentes permettent simplement de gérer notre liste de route, ou chacune d'entre-elle se compose d'un chemin et du couple controleur/action.
+
+
+```php
+$context = new RequestContext();
+$matcher = new UrlMatcher($routes, $context);
+```
+L'objet `RequestContext` contient les informations courantes de notre `Request`, en gros c'est un échantillon de notre `Request`, qui permet de cibler plus facilement des données importantes. Mais le plus simple reste de lire la [documentation](http://api.symfony.com/3.3/Symfony/Component/Routing/RequestContext.html).
+`UrlMatcher` quant à lui est assez transparent, c'est un outil qui nous permettra de faire la correspondance entre une URL et une route.
+
+Pour le moment nous avons vu un petit échantillon des composants `Routing` et `HttpFoundation`, mais le plus compliqué est à suivre avec `HttpKernel`.
+```php
+$controllerResolver = new ControllerResolver();
+$argumentResolver = new ArgumentResolver();
+```
+Qu'est ce qu'un `Resolver` ? Comme son nom l'indique, il permet de résoudre une problématique, et dans notre cas, il nous servira pour déterminer le bon controleur à executer et les bons arguments à passer à notre action.
+
+```php
+$dispatcher = new EventDispatcher();
+$dispatcher->addSubscriber(new RouterListener($matcher, $requestStack));
+```
+Cela devient de plus en plus débuleux. Dans une premier temps, nous allons déjà parler de la notion d'événement. Il y a 3 notions importantes :
+* Un `Event` est un événement par définition, c'est un objet qui permet simplement de donner des informations sur lui même et de contenir un certain nombre de données.
+* Un `Listener` est un écouteur, c'est un service qui aura pour rôle d'observer un événement et d'effectuer une (ou plusieurs) tâche lorsque l'évenement est déclenché.
+* Un `Dispatcher` est très simple, c'est l'outil pour déclencher un événement (je vous ai fait la version simplifié, pour plus d'infos la [documentation](https://symfony.com/doc/current/components/event_dispatcher.html) est faire pour ça).
+
+Donc dans notre cas ci-dessus, nous allons déclencher l'écoute d'un événement, et notre écouteur `RouteListener` va donc prendre la relève et son rôle est d'initialiser le contexte de notre requête.
+
+```php
+$kernel = new HttpKernel($dispatcher, $controllerResolver, $requestStack, $argumentResolver);
+$response = $kernel->handle($request);
+$response->send();
+```
+Voici la partie la plus intéressante, mais aussi la plus simple. Tout d'abord on instance un nouvel objet `HttpKernel`, puis on fait un simple `handle` avec pour argument notre fameuse `Request`, et cette méthode nous retourne un objet `Response`. En fait, cette méthode va effectuer tout le travail de correspondance entre notre requête et l'action du contrôleur que nous souhaitons appeler.
+
+Vous avez maintenant quelque chose de fonctionnel, il faut maintenant intégrer `Twig` et `Doctrine`, et pour cela nous allons créer un controleur frontal.
+
+### Contrôleur frontal
+Pour rappel, notre framework est basé principalement sur le patron de conception MVC (Modèle Vue Controleur), et pour faciliter le traitement de nos modèles et nos vues, nous allons implémenter des méthodes dans notre contrôleur frontal.
+
+*Voici un cours OpenClassrooms sur [Doctrine](https://openclassrooms.com/courses/apprendre-a-utiliser-doctrine/presentation-et-installation-2) pour mieux comprendre son utilité, et sur [Twig](https://openclassrooms.com/courses/developpez-votre-site-web-avec-le-framework-symfony/le-moteur-de-templates-twig-1).*
+
+```php
+public function __construct()
+{
+    $loader = new \Twig_Loader_Filesystem([__DIR__.'/../src/View']);
+    $this->twig = new \Twig_Environment($loader, array(
+        'cache' => false,
+    ));
+
+    $dbParams = array(
+        'driver'   => 'pdo_mysql',
+        'user'     => "root",
+        'password' => "*****",
+        'dbname'   => "formation-php",
+    );
+    $config = Setup::createAnnotationMetadataConfiguration([__DIR__."/../src/Entity"], false);
+    $this->doctrine = EntityManager::create($dbParams, $config);
+}
+```
+Comme vous pouvez le voir, l'intégration de `Twig` et de `Doctrine` tient en une dizaine de ligne. Nous allons détailler chaque bout de code :
+* `new \Twig_Loader_Filesystem([__DIR__.'/../src/View']);` : On instance un objet en lui précisant le ou les dossiers dans lesquels nous allons y mettre nos vues `Twig`.
+* `new \Twig_Environment($loader, array('cache' => false));` : C'est ici que nous initialisons `Twig`, en lui passant en paramètre 2 choses, notre `loader` précédemment créé, et nos options. Dans notre cas, on lui précise simplement que nous ne souhaitons pas utiliser la mise en cache des vues.
+* `$dbParams = array(...);` : Je pense que le nom de la variable parle pour elle même, c'est simplement un tableau contenant les informations de connexion à notre base de données.
+* `$config = Setup::createAnnotationMetadataConfiguration([__DIR__."/../src/Entity"], false);` : On arrive sur quelque chose d'un peu plus compliqué, c'est ici que l'on crée la configuration de `Doctrine`. Pour être plus précis, nous lui expliquons que nous souhaitons déjà utiliser les annotations pour mapper notre base de données dans notre entité. Tout en lui expliquant le ou les dossiers contenant nos entités.
+* `$this->doctrine = EntityManager::create($dbParams, $config);` : La méthode `create` nous renverra une instance de la classe `EntityManager`, qui nous permettra de manipuler notre base de données avec `Doctrine`.
+
+Il ne nous reste plus qu'à créer notre première méthode qui nous simplifiera la vie :
+
+```php
+protected function render($filename, $data)
+{
+    $template = $this->twig->load($filename);
+    return new Response($template->render($data));
+}
+```
+Cette méthode sera appelé dans nos contrôleurs pour renvoyer une vue à l'utilisateur. Mai spour être précis, elle renvoie une `Response`. La méthode `load` va charger notre vue `Twig`, et la méthode `render` permet de renvoyer le contenu de cette vue, avec comme argument `$data`. Cette variable est un tableau contenant les données que nous souhaitons passer à notre vue.
+
+### Notre premier contrôleur
+Dans un premier temps, on crée notre classe :
+```php
+// src/Controleur/DefaultController.php
+
+namespace Controller;
+
+use Framework\Controller;
+
+class DefaultController extends Controller
+{}
+```
+Très important, ne pas oublier d'étendre notre contrôleur frontal, sinon nous n'aurons pas accès à Doctrine ou notre méthode pour renvoyer une vue.
+
+On implémente ensuite notre première action :
+```php
+public function indexAction()
+{
+    $prenom = "Thomas";
+    return $this->render("index.html.twig", ["prenom" => $prenom]);
+}
+```
+Ici pour l'exemple, nous avons créé une variable `$prenom` que nous passerons à notre vue. Et la ligne intéressante est la méthode `render` qui permettra de renvoyer une réponse à l'utilisateur.
+#### Twig
+Voyons maintenant comment est construit notre vue `Twig` :
+```twig
+{% extends 'layout.html.twig' %}
+
+{% block title %}{{ parent() }} - Page d'accueil{% endblock %}
+
+{% block content %}
+    Bonjour {{ prenom }} !
+{% endblock %}
+```
+Nous allons d'abord nous attarder sur la ligne suivante `{{ prenom }}` : celle-ci permet d'afficher la variable `prenom` précédemment passer par notre contrôleur.
+
+Passons maintenant à ce qui fait de `Twig` l'un des meilleurs moteur de template : `{% extends 'layout.html.twig' %}`. Cette fonction permet d'étendre le fichier `layout.html.twig`. Ce fichier est un template, et nous l'étendrons pour éviter d'avoir à saisir de nouvau toutes les structures du document HTML.
+
+Voici un exemple du fichier `layout.html.twig` : 
+```twig
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Formation PHP{% endblock %}</title>
+    </head>
+    <body>
+        {% block content %}{% endblock %}
+    </body>
+</html>
+```
+Quand on utilise la fonction `extends`, dans une vue, on ne peut saisir du code que dans des `block`, et ces derniers doivent évidemment être au préalable présent dans la vue que l'on étend. 
+Ici nous avons les blocs `content` et `title`. Regardons de plus prêt l'utilisation du bloc `title` dans notre vue :
+
+```twig
+{% block title %}{{ parent() }} - Page d'accueil{% endblock %}
+```
+On lui explique que nous souhaitons afficher le contenu du bloc parent grace à l'instruction `{{ parent() }}` et lui ajouter du texte en plus. Par conséquent, on se retoruvera au final avec comme `title` : **Formation PHP - Page d'accueil**.
+#### Doctrine
+Je ne vais pas revenir sur l'utilisation poussée de Doctrine, le cours sur OpenClassrooms se suffit à lui-même. L'intérêt de Doctrine, est de créer des classe métier, appelé `Entité`, que nous manipulerons pour modifier notre base de données.
+
+Voici un petit exemple d'une entité :
+```php
+namespace Entity;
+
+/**
+ * Class User
+ * @package Entity
+ *
+ * @Entity
+ * @Table(name="user")
+ */
+class User
+{
+    /**
+     * @var integer
+     *
+     * @Id
+     * @Column(name="id", type="integer")
+     * @GeneratedValue
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @Column(name="username", type="string")
+     */
+    private $username;
+
+    /**
+     * @var string
+     *
+     * @Column(name="password", type="string")
+     */
+    private $password;
+
+    /**
+     * @var string
+     *
+     * @Column(name="email", type="string")
+     */
+    private $email;
+
+    /**
+     * @var string
+     *
+     * @Column(name="firstname", type="string")
+     */
+    private $firstname;
+
+    /**
+     * @var string
+     *
+     * @Column(name="lastname", type="string")
+     */
+    private $lastname;
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * @param mixed $username
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * @param mixed $password
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param mixed $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFirstname()
+    {
+        return $this->firstname;
+    }
+
+    /**
+     * @param mixed $firstname
+     */
+    public function setFirstname($firstname)
+    {
+        $this->firstname = $firstname;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastname()
+    {
+        return $this->lastname;
+    }
+
+    /**
+     * @param mixed $lastname
+     */
+    public function setLastname($lastname)
+    {
+        $this->lastname = $lastname;
+    }
+}
+```
+Ce qui nous intéresse, ce sont les annotations qui permettent de cartographier notre base de données. On peut donc définir notre table et les champs qui la compose.
+
+Maintenant, un exemple d'un ajout d'un `user` en base de données avec Doctrine :
+
+```php
+$user = new User();
+$user->setUsername("mon-username");
+$user->setPassword("mon-password");
+$user->setEmail("thomas@email.com");
+$user->setFirstname("Thomas");
+$user->setLastname("Boileau");
+$this->getDoctrine()->persist($user);
+$this->getDoctrine()->flush();
+```
+Ce sont les deux dernières lignes qui nous intéressent :
+* `$this->getDoctrine()->persist($user);` : La méthode `persist` permet de dire à Doctrine que nous souhaitons ajouter notre objet `$user` dans notre base de données. Mais la requête ne sera pas executée tant que nous ne le dirons pas explicitement.
+* `$this->getDoctrine()->persist($user);` : c'est justement le rôle de `flush` de valider notre transaction et donc de modifier notre base de données en conséquence.
+
+Au final, nous pourrons très effectuer plusieurs actions, comme des ajouts, des suppressions et des modifications, mais tant que nous n'appelons pas la méthode `flush`, la base de données ne sera pas impactée.
+Doctrine se base avant sur le notion de transaction, une transaction à un début et une fin, et si aucune erreur n'est survenue entre temps, nous validons la transaction. 
+
 ## Session N°3 : Gestion des produits
 ## Session N°4 : Prise de commandes
 ## Session N°5 : Aller plus loin...
