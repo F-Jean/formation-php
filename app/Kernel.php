@@ -37,7 +37,7 @@ class Kernel
             $request = Request::createFromGlobals();
             $requestStack = new RequestStack();
             $routes = new RouteCollection();
-            $routes->add("test", new Route("/", [
+            $routes->add("index", new Route("/", [
                 "_controller" => "Controller\DefaultController::indexAction"
             ]));
             $routes->add("category_list", new Route("/category/list", [
@@ -51,6 +51,30 @@ class Kernel
             ]));
             $routes->add("category_delete", new Route("/category/delete/{id}", [
                 "_controller" => "Controller\CategoryController::deleteAction"
+            ]));
+            $routes->add("brand_list", new Route("/brand/list", [
+                "_controller" => "Controller\BrandController::listAction"
+            ]));
+            $routes->add("brand_add", new Route("/brand/add", [
+                "_controller" => "Controller\BrandController::addAction"
+            ]));
+            $routes->add("brand_update", new Route("/brand/update/{id}", [
+                "_controller" => "Controller\BrandController::updateAction"
+            ]));
+            $routes->add("brand_delete", new Route("/brand/delete/{id}", [
+                "_controller" => "Controller\BrandController::deleteAction"
+            ]));
+            $routes->add("product_list", new Route("/product/list", [
+                "_controller" => "Controller\ProductController::listAction"
+            ]));
+            $routes->add("product_add", new Route("/product/add", [
+                "_controller" => "Controller\ProductController::addAction"
+            ]));
+            $routes->add("product_update", new Route("/product/update/{id}", [
+                "_controller" => "Controller\ProductController::updateAction"
+            ]));
+            $routes->add("product_delete", new Route("/product/delete/{id}", [
+                "_controller" => "Controller\ProductController::deleteAction"
             ]));
             $context = new RequestContext();
             $matcher = new UrlMatcher($routes, $context);

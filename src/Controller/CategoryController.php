@@ -18,7 +18,7 @@ class CategoryController extends Controller
     public function listAction(Request $request)
     {
         $categories = $this->getDoctrine()->getRepository("Entity\Category")->findAll();
-        return $this->render("category_list.html.twig", ["categories"=>$categories]);
+        return $this->render("category/list.html.twig", ["categories"=>$categories]);
     }
 
     public function addAction(Request $request)
@@ -31,7 +31,7 @@ class CategoryController extends Controller
             header("location: http://formation-php.dev/category/list");
             die;
         }
-        return $this->render("category_add.html.twig");
+        return $this->render("category/add.html.twig");
     }
 
     public function updateAction(Request $request, $id)
@@ -43,7 +43,7 @@ class CategoryController extends Controller
             header("location: http://formation-php.dev/category/list");
             die;
         }
-        return $this->render("category_update.html.twig", ["category"=>$category]);
+        return $this->render("category/update.html.twig", ["category"=>$category]);
     }
 
     public function deleteAction($id)

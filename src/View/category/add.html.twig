@@ -1,0 +1,18 @@
+{% extends 'templates/without_sidebar.html.twig' %}
+
+{% block title %}{{ parent() }} - Gestion des catégories{% endblock %}
+
+{% block content %}
+    <div class="col-md-6 col-md-offset-3">
+        <div class="jumbotron">
+            <h1>Ajouter une catégorie</h1>
+        </div>
+        <form method="post">
+            <div class="form-group">
+                <label>Nom de la catégorie :</label>
+                <input type="text" class="form-control" required name="name"/>
+            </div>
+            <button type="submit" class="btn btn-block btn-success">Valider</button>
+        </form>
+    </div>
+{% endblock %}

@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'templates/base.html.twig' %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset("/css/bootstrap.min.css") }}">
@@ -27,21 +27,21 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Start Bootstrap</a>
+                <a class="navbar-brand" href="/">E-Boutik</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="">Boutique</a>
+                        <a href="/">Boutique</a>
                     </li>
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="/category/list">Catégories</a></li>
-                            <li><a href="#">Marques</a></li>
-                            <li><a href="#">Produits</a></li>
+                            <li><a href="/brand/list">Marques</a></li>
+                            <li><a href="/product/list">Produits</a></li>
                         </ul>
                     </li>
                 </ul>

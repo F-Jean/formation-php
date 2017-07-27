@@ -1,0 +1,34 @@
+{% extends 'templates/without_sidebar.html.twig' %}
+
+{% block title %}{{ parent() }} - Gestion des marques{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="jumbotron">
+            <h1>Gestion des marques</h1>
+            <p>Ajoute, modifie ou supprime des marques.</p>
+            <p><a class="btn btn-primary btn-lg" href="/brand/add" role="button">Ajouter une nouvelle marque</a></p>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nom</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for brand in brands %}
+                    <tr>
+                        <td>{{ brand.id }}</td>
+                        <td>{{ brand.name }}</td>
+                        <td>
+                            <a class="btn btn-primary" href="/brand/update/{{ brand.id }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                            <a class="btn btn-primary" href="/brand/delete/{{ brand.id }}"><span class="glyphicon glyphicon-remove"></span></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

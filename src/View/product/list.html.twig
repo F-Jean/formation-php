@@ -1,0 +1,46 @@
+{% extends 'templates/without_sidebar.html.twig' %}
+
+{% block title %}{{ parent() }} - Gestion des produits{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="jumbotron">
+            <h1>Gestion des produits</h1>
+            <p>Ajoute, modifie ou supprime des produits.</p>
+            <p><a class="btn btn-primary btn-lg" href="/product/add" role="button">Ajouter une nouveau produit</a></p>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nom</th>
+                    <th>Marque</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Prix HT</th>
+                    <th>TVA</th>
+                    <th>Prix TTC</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>{{ product.id }}</td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.brand.name }}</td>
+                        <td>{{ product.category.name }}</td>
+                        <td>{{ product.description }}</td>
+                        <td>{{ product.priceET }} €</td>
+                        <td>{{ product.vat*100 }} %</td>
+                        <td>{{ product.priceIT }} €</td>
+                        <td>
+                            <a class="btn btn-primary" href="/product/update/{{ product.id }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                            <a class="btn btn-primary" href="/product/delete/{{ product.id }}"><span class="glyphicon glyphicon-remove"></span></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
