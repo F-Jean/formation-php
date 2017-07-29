@@ -10,7 +10,12 @@ namespace Framework;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
+use Manager\CartManager;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
+use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 
 /**
  * Class Controller
@@ -29,6 +34,11 @@ class Controller
     private $doctrine;
 
     /**
+     * @var CartManager
+     */
+    private $cartManager;
+
+    /**
      * Controller constructor.
      */
     public function __construct()
@@ -43,6 +53,12 @@ class Controller
             return $asset;
         }));
 
+        $this->twig->addFunction(new \Twig_SimpleFunction('controller', function ($controller,$action,$args = []){
+            $controller = new $controller();
+            $response = call_user_func_array([$controller,$action], $args);
+            return $response->getContent();
+        }));
+
         $dbParams = array(
             'driver'   => 'pdo_mysql',
             'user'     => "root",
@@ -53,6 +69,20 @@ class Controller
         $config = Setup::createAnnotationMetadataConfiguration([__DIR__."/../src/Entity"], false, __DIR__."/../web/cache");
         $config->setAutoGenerateProxyClasses(true);
         $this->doctrine = EntityManager::create($dbParams, $config);
+
+        $request = Request::createFromGlobals();
+        if($request->getSession() === null){
+            $request->setSession(new Session());
+        }
+        $this->cartManager = new CartManager($request, $this->doctrine);
+    }
+
+    /**
+     * @return CartManager
+     */
+    public function getCartManager()
+    {
+        return $this->cartManager;
     }
 
     /**

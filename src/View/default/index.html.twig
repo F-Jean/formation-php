@@ -44,6 +44,9 @@
                         <h4><a href="#">{{ product.name }}</a></h4>
                         <strong>{{ product.brand.name }} - {{ product.category.name }}</strong>
                         <p>{{ product.description }}</p>
+                        <a href="/cart/add/{{ product.id }}" class="pull-left btn btn-sm btn-primary">
+                            <span class="glyphicon  glyphicon-shopping-cart"></span>
+                        </a>
                         <h4 class="pull-right">{{ product.priceIT|round(2) }} €</h4>
                     </div>
                 </div>

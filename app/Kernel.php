@@ -37,8 +37,14 @@ class Kernel
             $request = Request::createFromGlobals();
             $requestStack = new RequestStack();
             $routes = new RouteCollection();
-            $routes->add("index", new Route("/", [
-                "_controller" => "Controller\DefaultController::indexAction"
+            $routes->add("cart", new Route("/cart", [
+                "_controller" => "Controller\DefaultController::cartAction"
+            ]));
+            $routes->add("cart_add", new Route("/cart/add/{id}", [
+                "_controller" => "Controller\DefaultController::addCartAction"
+            ]));
+            $routes->add("cart_delete", new Route("/cart/delete/{id}", [
+                "_controller" => "Controller\DefaultController::deleteCartAction"
             ]));
             $routes->add("category_list", new Route("/category/list", [
                 "_controller" => "Controller\CategoryController::listAction"
@@ -75,6 +81,10 @@ class Kernel
             ]));
             $routes->add("product_delete", new Route("/product/delete/{id}", [
                 "_controller" => "Controller\ProductController::deleteAction"
+            ]));
+            $routes->add("index", new Route("/{category}", [
+                "category" => null,
+                "_controller" => "Controller\DefaultController::indexAction"
             ]));
             $context = new RequestContext();
             $matcher = new UrlMatcher($routes, $context);

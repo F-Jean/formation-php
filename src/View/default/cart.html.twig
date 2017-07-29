@@ -1,0 +1,61 @@
+{% extends 'templates/without_sidebar.html.twig' %}
+
+{% block title %}{{ parent() }} - Gestion des produits{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="jumbotron">
+            <h1>Mon panier</h1>
+            <p>Ajoute, modifie ou supprime un élément du panier.</p>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Actions</th>
+                    <th>Nom</th>
+                    <th>Marque</th>
+                    <th>Category</th>
+                    <th>Prix unitaire HT</th>
+                    <th>TVA</th>
+                    <th>Prix unitaire TTC</th>
+                    <th>Quantité</th>
+                    <th>Total HT</th>
+                    <th>Total TVA</th>
+                    <th>Total TTC</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td><a href="/cart/delete/{{ product.product.id }}" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-remove"></span></a></td>
+                        <td>{{ product.product.name }}</td>
+                        <td>{{ product.product.brand.name }}</td>
+                        <td>{{ product.product.category.name }}</td>
+                        <td>{{ product.product.priceET|round(2) }} €</td>
+                        <td>{{ product.product.vat*100 }} %</td>
+                        <td>{{ product.product.priceIT|round(2) }} €</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>{{ (product.quantity*product.product.priceET)|round(2) }} €</td>
+                        <td>{{ (product.quantity*product.product.priceET*product.product.vat)|round(2) }} €</td>
+                        <td>{{ (product.quantity*product.product.priceIT)|round(2) }} €</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th class="text-right" colspan="10">Total HT : </th>
+                    <th>{{ totalET|round(2) }} €</th>
+                </tr>
+                <tr>
+                    <th class="text-right" colspan="10">Total TVA : </th>
+                    <th>{{ totalVAT|round(2) }} €</th>
+                </tr>
+                <tr>
+                    <th class="text-right" colspan="10">Net à payer : </th>
+                    <th>{{ totalIT|round(2) }} €</th>
+                </tr>
+            </tfoot>
+        </table>
+        <a class="pull-right btn btn-primary">Commander</a>
+    </div>
+{% endblock %}

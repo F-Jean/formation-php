@@ -25,6 +25,7 @@ class ProductController extends Controller
         $brands = $this->getDoctrine()->getRepository("Entity\Brand")->findAll();
         $categories = $this->getDoctrine()->getRepository("Entity\Category")->findAll();
         if($request->getMethod()=="POST"){
+            exit;
             $product = new Product();
             $product->setName($request->request->get("name"));
             $product->setDescription($request->request->get("description"));
