@@ -8,6 +8,8 @@
 
 namespace Controller;
 
+use Entity\Order;
+use Entity\OrderLine;
 use Framework\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,6 +51,56 @@ class DefaultController extends Controller
         $this->getCartManager()->deleteCart($id);
         header("location: http://formation-php.dev/cart");
         die;
+    }
+
+    public function orderAction(Request $request)
+    {
+        $cart = $this->getCartManager()->getCart();
+        if(count($cart) == 0){
+            header("location: http://formation-php.dev/cart");
+            die;
+        }
+        if($request->getMethod()=="POST"){
+            $order = new Order();
+            $order->setEmail($request->request->get("email"));
+            $order->setLastName($request->request->get("last_name"));
+            $order->setFirstname($request->request->get("first_name"));
+            $order->setAddress($request->request->get("address"));
+            $order->setZip($request->request->get("zip"));
+            $order->setCity($request->request->get("city"));
+            foreach($cart as $cartItem)
+            {
+                $line = new OrderLine();
+                $line->setProduct($cartItem->getProduct());
+                $line->setQuantity($cartItem->getQuantity());
+                $line->setPriceET($cartItem->getProduct()->getPriceET());
+                $line->setVat($cartItem->getProduct()->getVat());
+                $order->addLine($line);
+            }
+            $order->setOrderedAt(new \DateTime());
+            $order->generateNum();
+            $order->setTotalET($this->getCartManager()->getTotalET());
+            $order->setTotalIT($this->getCartManager()->getTotalIT());
+            $order->setTotalVAT($this->getCartManager()->getTotalVAT());
+            $this->getDoctrine()->persist($order);
+            $this->getDoctrine()->flush();
+            $this->getCartManager()->emptyCart();
+            header("location: http://formation-php.dev/order/list");
+            die;
+        }
+        return $this->render("default/order.html.twig", [
+                'products' => $cart,
+                "totalET"=>$this->getCartManager()->getTotalET(),
+                "totalVAT"=>$this->getCartManager()->getTotalVAT(),
+                "totalIT"=>$this->getCartManager()->getTotalIT()
+            ]
+        );
+    }
+
+    public function orderListAction()
+    {
+        $orders = $this->getDoctrine()->getRepository("Entity\Order")->findAll();
+        return $this->render("default/orders.html.twig", ["orders"=>$orders]);
     }
 
     public function sidebarAction()

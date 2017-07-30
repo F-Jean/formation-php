@@ -1,0 +1,88 @@
+{% extends 'templates/without_sidebar.html.twig' %}
+
+{% block title %}{{ parent() }} - Gestion des produits{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="jumbotron">
+            <h1>Commander</h1>
+            <p>Adresse de livraison</p>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Marque</th>
+                <th>Category</th>
+                <th>Prix unitaire HT</th>
+                <th>TVA</th>
+                <th>Prix unitaire TTC</th>
+                <th>Quantité</th>
+                <th>Total HT</th>
+                <th>Total TVA</th>
+                <th>Total TTC</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.product.name }}</td>
+                    <td>{{ product.product.brand.name }}</td>
+                    <td>{{ product.product.category.name }}</td>
+                    <td>{{ product.product.priceET|round(2) }} €</td>
+                    <td>{{ product.product.vat*100 }} %</td>
+                    <td>{{ product.product.priceIT|round(2) }} €</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>{{ (product.quantity*product.product.priceET)|round(2) }} €</td>
+                    <td>{{ (product.quantity*product.product.priceET*product.product.vat)|round(2) }} €</td>
+                    <td>{{ (product.quantity*product.product.priceIT)|round(2) }} €</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <th class="text-right" colspan="9">Total HT : </th>
+                <th>{{ totalET|round(2) }} €</th>
+            </tr>
+            <tr>
+                <th class="text-right" colspan="9">Total TVA : </th>
+                <th>{{ totalVAT|round(2) }} €</th>
+            </tr>
+            <tr>
+                <th class="text-right" colspan="9">Net à payer : </th>
+                <th>{{ totalIT|round(2) }} €</th>
+            </tr>
+            </tfoot>
+        </table>
+        <form method="post">
+            <div class="form-group">
+                <label for="email">Adresse email :</label>
+                <input type="text" required class="form-control" name="email"/>
+            </div>
+            <div class="form-group">
+                <label for="first_name">Prénom :</label>
+                <input type="text" required class="form-control" name="first_name"/>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Nom :</label>
+                <input type="text" required class="form-control" name="last_name"/>
+            </div>
+            <div class="form-group">
+                <label for="address">Adresse :</label>
+                <textarea name="address" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="zip">Code postal :</label>
+                <input type="text" required class="form-control" name="zip"/>
+            </div>
+            <div class="form-group">
+                <label for="city">Ville :</label>
+                <input type="text" required class="form-control" name="city"/>
+            </div>
+            <p class="text-right">
+                <a href="/cart" class="btn btn-warning">Modifier mon panier</a>
+                <button type="submit" class="btn btn-primary">Valider ma commande</button>
+            </p>
+        </form>
+    </div>
+{% endblock %}

@@ -25,7 +25,6 @@ class ProductController extends Controller
         $brands = $this->getDoctrine()->getRepository("Entity\Brand")->findAll();
         $categories = $this->getDoctrine()->getRepository("Entity\Category")->findAll();
         if($request->getMethod()=="POST"){
-            exit;
             $product = new Product();
             $product->setName($request->request->get("name"));
             $product->setDescription($request->request->get("description"));
@@ -49,7 +48,8 @@ class ProductController extends Controller
         $brands = $this->getDoctrine()->getRepository("Entity\Brand")->findAll();
         $categories = $this->getDoctrine()->getRepository("Entity\Category")->findAll();
         $product = $this->getDoctrine()->getRepository("Entity\Product")->find($id);
-        if($request->getMethod()=="POST"){  $product->setName($request->request->get("name"));
+        if($request->getMethod()=="POST"){
+            $product->setName($request->request->get("name"));
             $product->setDescription($request->request->get("description"));
             $product->setPriceET($request->request->get("price_et"));
             $product->setVat($request->request->get("vat"));

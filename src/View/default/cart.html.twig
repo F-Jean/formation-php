@@ -8,6 +8,11 @@
             <h1>Mon panier</h1>
             <p>Ajoute, modifie ou supprime un élément du panier.</p>
         </div>
+        {% if products|length == 0 %}
+            <div class="alert alert-warning">
+                <strong>Attention, votre panier est vide.</strong>
+            </div>
+        {% endif %}
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -56,6 +61,8 @@
                 </tr>
             </tfoot>
         </table>
-        <a class="pull-right btn btn-primary">Commander</a>
+        {% if products|length > 0 %}
+            <a href="/order" class="pull-right btn btn-primary">Commander</a>
+        {% endif %}
     </div>
 {% endblock %}

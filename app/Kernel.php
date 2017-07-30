@@ -37,6 +37,12 @@ class Kernel
             $request = Request::createFromGlobals();
             $requestStack = new RequestStack();
             $routes = new RouteCollection();
+            $routes->add("order_list", new Route("/order/list", [
+                "_controller" => "Controller\DefaultController::orderListAction"
+            ]));
+            $routes->add("order", new Route("/order", [
+                "_controller" => "Controller\DefaultController::orderAction"
+            ]));
             $routes->add("cart", new Route("/cart", [
                 "_controller" => "Controller\DefaultController::cartAction"
             ]));

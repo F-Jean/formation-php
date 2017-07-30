@@ -69,6 +69,12 @@ class CartManager
         }
     }
 
+    public function emptyCart()
+    {
+        $this->request->getSession()->remove("cart");
+        $this->initCart();
+    }
+
     private function reloadSession()
     {
         $this->request->getSession()->set("cart", array_map(function(CartItem $cartItem){

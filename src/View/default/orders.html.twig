@@ -1,0 +1,75 @@
+{% extends 'templates/without_sidebar.html.twig' %}
+
+{% block title %}{{ parent() }} - Historique des commandes{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="jumbotron">
+            <h1>Historique des commandes</h1>
+        </div>
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>Info</th>
+                <th>Détail de la commande</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>
+                        <strong>N° : </strong>{{ order.num }}<br/>
+                        <strong>Date de commande : </strong>{{ order.orderedAt|date("d/m/Y") }}<br/>
+                        <strong>Adresse : </strong><br/>
+                        {{ order.firstName }} {{ order.lastName }}<br/>
+                        {{ order.address }}<br/>
+                        {{ order.zip }} {{ order.city }}
+                    </td>
+                    <td>
+                        <table class="table table-striped" style="margin:0;">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Prix unitaire HT</th>
+                                    <th>TVA</th>
+                                    <th>Prix unitaire TTC</th>
+                                    <th>Quantité</th>
+                                    <th>Total HT</th>
+                                    <th>Total TTC</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for line in order.lines %}
+                                    <tr>
+                                        <td>{{ line.product.name }} - {{ line.product.brand.name }}</td>
+                                        <td>{{ line.priceET }} €</td>
+                                        <td>{{ line.vat*100 }} %</td>
+                                        <td>{{ line.priceET*(1+line.vat) }} €</td>
+                                        <td>{{ line.quantity }} €</td>
+                                        <td>{{ line.quantity*line.priceET }} €</td>
+                                        <td>{{ line.quantity*(line.priceET*(1+line.vat)) }} €</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td class="text-right" colspan="6"><strong>Total HT : </strong></td>
+                                    <td>{{ order.totalET }} €</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right" colspan="6"><strong>Total TVA : </strong></td>
+                                    <td>{{ order.totalVAT }} €</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right" colspan="6"><strong>Total TTC : </strong></td>
+                                    <td>{{ order.totalIT }} €</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

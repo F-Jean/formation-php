@@ -39,6 +39,11 @@ class Controller
     private $cartManager;
 
     /**
+     * @var \Swift_Mailer
+     */
+    private $mailer;
+
+    /**
      * Controller constructor.
      */
     public function __construct()
