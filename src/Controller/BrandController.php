@@ -27,8 +27,7 @@ class BrandController extends Controller
             $brand->setName($request->request->get("name"));
             $this->getDoctrine()->persist($brand);
             $this->getDoctrine()->flush();
-            header("location: http://formation-php.dev/brand/list");
-            die;
+            return $this->redirect("brand_list");
         }
         return $this->render("brand/add.html.twig");
     }
@@ -39,8 +38,8 @@ class BrandController extends Controller
         if($request->getMethod()=="POST"){
             $brand->setName($request->request->get("name"));
             $this->getDoctrine()->flush();
-            header("location: http://formation-php.dev/brand/list");
-            die;
+
+            return $this->redirect("brand_list");
         }
         return $this->render("brand/update.html.twig", ["brand"=>$brand]);
     }
@@ -50,7 +49,6 @@ class BrandController extends Controller
         $brand = $this->getDoctrine()->getRepository("Entity\Brand")->find($id);
         $this->getDoctrine()->remove($brand);
         $this->getDoctrine()->flush();
-        header("location: http://formation-php.dev/brand/list");
-        die;
+        return $this->redirect("brand_list");
     }
 }

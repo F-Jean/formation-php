@@ -1,0 +1,7 @@
+services:
+    cart_manager:
+        class: Manager\CartManager
+        arguments: ["@request_stack","@doctrine"]
+    session_manager:
+        class: Manager\SessionManager
+        arguments: ["@request_stack","@doctrine"]

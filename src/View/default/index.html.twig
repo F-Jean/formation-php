@@ -3,7 +3,6 @@
 {% block title %}{{ parent() }} - Test{% endblock %}
 
 {% block content %}
-
     <div class="row carousel-holder">
 
         <div class="col-md-12">
@@ -39,14 +38,16 @@
         {% for product in products %}
             <div class="col-sm-4 col-lg-4 col-md-4">
                 <div class="thumbnail">
-                    <img src="http://placehold.it/320x150" alt="">
+                    <img src="{{ product.image is null ? "http://placehold.it/320x150" : asset("img/" ~ product.image) }}" alt="">
                     <div class="caption">
                         <h4><a href="#">{{ product.name }}</a></h4>
                         <strong>{{ product.brand.name }} - {{ product.category.name }}</strong>
                         <p>{{ product.description }}</p>
-                        <a href="/cart/add/{{ product.id }}" class="pull-left btn btn-sm btn-primary">
-                            <span class="glyphicon  glyphicon-shopping-cart"></span>
-                        </a>
+                        {% if session is not null %}
+                            <a href="/cart/add/{{ product.id }}" class="pull-left btn btn-sm btn-primary">
+                                <span class="glyphicon  glyphicon-shopping-cart"></span>
+                            </a>
+                        {% endif %}
                         <h4 class="pull-right">{{ product.priceIT|round(2) }} €</h4>
                     </div>
                 </div>

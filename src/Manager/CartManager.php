@@ -9,8 +9,11 @@
 namespace Manager;
 
 use Doctrine\ORM\EntityManager;
+use Framework\Container\Doctrine;
 use Model\CartItem;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Class CartManager
@@ -35,13 +38,13 @@ class CartManager
 
     /**
      * CartManager constructor.
-     * @param Request $request
-     * @param EntityManager $entityManager
+     * @param RequestStack $requestStack
+     * @param Doctrine $doctrine
      */
-    public function __construct(Request $request, EntityManager $entityManager)
+    public function __construct(RequestStack $requestStack, Doctrine $doctrine)
     {
-        $this->request = $request;
-        $this->doctrine = $entityManager;
+        $this->request = $requestStack->getCurrentRequest();
+        $this->doctrine = $doctrine->getManager();
         $this->initCart();
     }
 
@@ -58,6 +61,9 @@ class CartManager
      */
     private function initCart()
     {
+        if($this->request->getSession() === null){
+            $this->request->setSession(new Session());
+        }
         $cart = $this->request->getSession()->get("cart");
         if(!empty($cart)){
             foreach($cart as $product_id=>$quantity){

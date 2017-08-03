@@ -31,31 +31,31 @@ class DefaultController extends Controller
     public function cartAction()
     {
         return $this->render("default/cart.html.twig", [
-                'products' => $this->getCartManager()->getCart(),
-                "totalET"=>$this->getCartManager()->getTotalET(),
-                "totalVAT"=>$this->getCartManager()->getTotalVAT(),
-                "totalIT"=>$this->getCartManager()->getTotalIT()
+                'products' => $this->get("cart_manager")->getCart(),
+                "totalET"=>$this->get("cart_manager")->getTotalET(),
+                "totalVAT"=>$this->get("cart_manager")->getTotalVAT(),
+                "totalIT"=>$this->get("cart_manager")->getTotalIT()
             ]
         );
     }
 
     public function addCartAction($id)
     {
-        $this->getCartManager()->addCart($id);
+        $this->get("cart_manager")->addCart($id);
         header("location: http://formation-php.dev/cart");
         die;
     }
 
     public function deleteCartAction($id)
     {
-        $this->getCartManager()->deleteCart($id);
+        $this->get("cart_manager")->deleteCart($id);
         header("location: http://formation-php.dev/cart");
         die;
     }
 
     public function orderAction(Request $request)
     {
-        $cart = $this->getCartManager()->getCart();
+        $cart = $this->get("cart_manager")->getCart();
         if(count($cart) == 0){
             header("location: http://formation-php.dev/cart");
             die;
@@ -77,22 +77,18 @@ class DefaultController extends Controller
                 $line->setVat($cartItem->getProduct()->getVat());
                 $order->addLine($line);
             }
-            $order->setOrderedAt(new \DateTime());
-            $order->generateNum();
-            $order->setTotalET($this->getCartManager()->getTotalET());
-            $order->setTotalIT($this->getCartManager()->getTotalIT());
-            $order->setTotalVAT($this->getCartManager()->getTotalVAT());
+
             $this->getDoctrine()->persist($order);
             $this->getDoctrine()->flush();
-            $this->getCartManager()->emptyCart();
+            $this->get("cart_manager")->emptyCart();
             header("location: http://formation-php.dev/order/list");
             die;
         }
         return $this->render("default/order.html.twig", [
                 'products' => $cart,
-                "totalET"=>$this->getCartManager()->getTotalET(),
-                "totalVAT"=>$this->getCartManager()->getTotalVAT(),
-                "totalIT"=>$this->getCartManager()->getTotalIT()
+                "totalET"=>$this->get("cart_manager")->getTotalET(),
+                "totalVAT"=>$this->get("cart_manager")->getTotalVAT(),
+                "totalIT"=>$this->get("cart_manager")->getTotalIT()
             ]
         );
     }

@@ -1,0 +1,35 @@
+services:
+    templating:
+        class: Framework\Container\Templating
+        arguments: ["@session_manager"]
+    doctrine:
+        class: Framework\Container\Doctrine
+    request_stack:
+        class: Symfony\Component\HttpFoundation\RequestStack
+    context:
+        class:     Symfony\Component\Routing\RequestContext
+    matcher:
+        class:     Symfony\Component\Routing\Matcher\UrlMatcher
+        arguments: ["%routes%","@context"]
+    argument_resolver:
+        class:     Symfony\Component\HttpKernel\Controller\ArgumentResolver
+    controller_resolver:
+        class:     Symfony\Component\HttpKernel\Controller\ControllerResolver
+    listener.router:
+        class:     Symfony\Component\HttpKernel\EventListener\RouterListener
+        arguments: ['@matcher',"@request_stack"]
+    listener.response:
+        class:     Symfony\Component\HttpKernel\EventListener\ResponseListener
+        arguments: ['UTF-8']
+    listener.exception:
+        class:     Symfony\Component\HttpKernel\EventListener\ExceptionListener
+        arguments: ['Calendar\Controller\ErrorController::exceptionAction']
+    dispatcher:
+        class: Symfony\Component\EventDispatcher\EventDispatcher
+        calls:
+            - [addSubscriber, ['@listener.router']]
+            - [addSubscriber, ['@listener.response']]
+            - [addSubscriber, ['@listener.exception']]
+    framework:
+        class: Framework\Framework
+        arguments: ["@dispatcher","@controller_resolver","@request_stack","@argument_resolver"]

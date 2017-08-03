@@ -11,11 +11,17 @@ namespace Framework;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use Manager\CartManager;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
+use Symfony\Component\Routing\Generator\UrlGenerator;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Routing\Loader\YamlFileLoader;
+use Symfony\Component\Routing\RouteCollection;
 
 /**
  * Class Controller
@@ -24,70 +30,20 @@ use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 class Controller
 {
     /**
-     * @var \Twig_Environment
-     */
-    private $twig;
-
-    /**
-     * @var EntityManager
-     */
-    private $doctrine;
-
-    /**
-     * @var CartManager
-     */
-    private $cartManager;
-
-    /**
-     * @var \Swift_Mailer
-     */
-    private $mailer;
-
-    /**
      * Controller constructor.
      */
     public function __construct()
     {
-        $loader = new \Twig_Loader_Filesystem([__DIR__.'/../src/View']);
-        $this->twig = new \Twig_Environment($loader, array(
-            'cache' => false,
-        ));
-
-        $this->twig->addFunction(new \Twig_SimpleFunction('asset', function ($asset){
-            // Gérer la notion de version
-            return $asset;
-        }));
-
-        $this->twig->addFunction(new \Twig_SimpleFunction('controller', function ($controller,$action,$args = []){
-            $controller = new $controller();
-            $response = call_user_func_array([$controller,$action], $args);
-            return $response->getContent();
-        }));
-
-        $dbParams = array(
-            'driver'   => 'pdo_mysql',
-            'user'     => "root",
-            'password' => "9wf23r2",
-            'dbname'   => "formation-php",
-            'charset'  => 'utf8',
-        );
-        $config = Setup::createAnnotationMetadataConfiguration([__DIR__."/../src/Entity"], false, __DIR__."/../web/cache");
-        $config->setAutoGenerateProxyClasses(true);
-        $this->doctrine = EntityManager::create($dbParams, $config);
-
-        $request = Request::createFromGlobals();
-        if($request->getSession() === null){
-            $request->setSession(new Session());
-        }
-        $this->cartManager = new CartManager($request, $this->doctrine);
+        global $container;
+        $this->container = $container;
     }
 
     /**
-     * @return CartManager
+     * @param $name
      */
-    public function getCartManager()
+    public function get($name)
     {
-        return $this->cartManager;
+        return $this->container->get($name);
     }
 
     /**
@@ -95,7 +51,7 @@ class Controller
      */
     protected function getDoctrine()
     {
-        return $this->doctrine;
+        return $this->container->get("doctrine")->getManager();
     }
 
     /**
@@ -105,7 +61,17 @@ class Controller
      */
     protected function render($filename, $data = [])
     {
-        $template = $this->twig->load($filename);
+        $template = $this->container->get("templating")->getTwig()->load($filename);
         return new Response($template->render($data));
+    }
+
+    /**
+     * @param $route
+     * @param array $args
+     */
+    protected function redirect($route, $args = [])
+    {
+        $generator = new UrlGenerator($this->container->getParameter("routes"), $this->container->get("context"));
+        return new RedirectResponse($generator->generate($route,$args));
     }
 }

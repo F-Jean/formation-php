@@ -8,12 +8,15 @@
 
 namespace Entity;
 
+use Doctrine\ORM\Event\LifecycleEventArgs;
+
 /**
  * Class Order
  * @package Entity
  *
  * @Entity
  * @Table(name="shop_order")
+ * @HasLifecycleCallbacks
  */
 class Order
 {
@@ -78,7 +81,7 @@ class Order
     /**
      * @var string
      *
-     * @Column(name="num", type="string", length=255)
+     * @Column(name="num", type="string", length=255, nullable=true)
      */
     private $num;
 
@@ -328,20 +331,32 @@ class Order
     }
 
     /**
-     * Generate num
+     * @PrePersist()
      */
-    public function generateNum()
+    public function prePersist()
     {
-        $str = "";
-        $chaine = "abcdefghijklmnpqrstuvwxyABCDEFGHIJKLMNOPQRSUTVWXYZ0123456789";
-        $nb_chars = strlen($chaine);
-
-        for($i=0; $i<8; $i++)
-        {
-            $str .= $chaine[ rand(0, ($nb_chars-1)) ];
-        }
-
-        $this->num = $str;
+        $this->setTotalET(array_reduce($this->lines,function($total,OrderLine $line){
+            $total += $line->getProduct()->getPriceET()*$line->getQuantity();
+            return $total;
+        }));
+        $this->setTotalIT(array_reduce($this->lines,function($total,OrderLine $line){
+            $total += $line->getProduct()->getPriceIT()*$line->getQuantity();
+            return $total;
+        }));
+        $this->setTotalVAT(array_reduce($this->lines,function($total,OrderLine $line){
+            $total += $line->getProduct()->getPriceET()*$line->getProduct()->getVat()*$line->getQuantity();
+            return $total;
+        }));
+        $this->setOrderedAt(new \DateTime());
     }
 
+    /**
+     * @PostPersist()
+     */
+    public function postPersist(LifecycleEventArgs $eventArgs)
+    {
+        $this->setNum("BCB-".$this->id);
+        $em = $eventArgs->getEntityManager();
+        $em->flush();
+    }
 }

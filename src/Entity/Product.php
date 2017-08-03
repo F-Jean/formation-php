@@ -57,7 +57,7 @@ class Product
     /**
      * @var string
      *
-     * @Column(name="image", type="string")
+     * @Column(name="image", type="string", nullable=true)
      */
     private $image;
 

@@ -1,0 +1,64 @@
+user_login:
+    path: /login
+    defaults: { _controller: 'Controller\UserController::loginAction' }
+user_logout:
+    path: /logout
+    defaults: { _controller: 'Controller\UserController::logoutAction' }
+user_register:
+    path: /register
+    defaults: { _controller: 'Controller\UserController::registerAction' }
+order_list:
+    path:     /order/list
+    defaults: { _controller: 'Controller\DefaultController::orderListAction' }
+order:
+    path:     /order
+    defaults: { _controller: 'Controller\DefaultController::orderAction' }
+cart:
+    path:     /cart
+    defaults: { _controller: 'Controller\DefaultController::cartAction' }
+cart_add:
+    path:     /cart/add/{id}
+    defaults: { _controller: 'Controller\DefaultController::addCartAction' }
+cart_delete:
+    path:     /cart/delete/{id}
+    defaults: { _controller: 'Controller\DefaultController::deleteCartAction' }
+category_list:
+    path:     /category/list
+    defaults: { _controller: 'Controller\CategoryController::listAction' }
+category_add:
+    path:     /category/add
+    defaults: { _controller: 'Controller\CategoryController::addAction' }
+category_update:
+    path:     /category/update/{id}
+    defaults: { _controller: 'Controller\CategoryController::updateAction' }
+category_delete:
+    path:     /category/delete/{id}
+    defaults: { _controller: 'Controller\CategoryController::deleteAction' }
+brand_list:
+    path:     /brand/list
+    defaults: { _controller: 'Controller\BrandController::listAction' }
+brand_add:
+    path:     /brand/add
+    defaults: { _controller: 'Controller\BrandController::addAction' }
+brand_update:
+    path:     /brand/update/{id}
+    defaults: { _controller: 'Controller\BrandController::updateAction' }
+brand_delete:
+    path:     /brand/delete/{id}
+    defaults: { _controller: 'Controller\BrandController::deleteAction' }
+product_list:
+    path:     /product/list
+    defaults: { _controller: 'Controller\ProductController::listAction' }
+product_add:
+    path:     /product/add
+    defaults: { _controller: 'Controller\ProductController::addAction' }
+product_update:
+    path:     /product/update/{id}
+    defaults: { _controller: 'Controller\ProductController::updateAction' }
+product_delete:
+    path:     /product/delete/{id}
+    defaults: { _controller: 'Controller\ProductController::deleteAction' }
+index:
+    path:     /{category}
+    defaults: { _controller: 'Controller\DefaultController::indexAction', category: null }
+

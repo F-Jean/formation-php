@@ -7,7 +7,7 @@
         <div class="jumbotron">
             <h1>Ajouter d'un produit</h1>
         </div>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label>Nom de la produit :</label>
                 <input type="text" class="form-control" required name="name"/>
@@ -23,6 +23,10 @@
             <div class="form-group">
                 <label>TVA du produit :</label>
                 <input type="number" step="0.01" class="form-control" required name="vat"/>
+            </div>
+            <div class="form-group">
+                <label>Image du produit :</label>
+                <input type="file" class="form-control" required name="file"/>
             </div>
             <div class="form-group">
                 <label>Marque du produit :</label>

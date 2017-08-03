@@ -16,8 +16,12 @@ class ProductController extends Controller
 {
     public function listAction()
     {
-        $products = $this->getDoctrine()->getRepository("Entity\Product")->findAll();
-        return $this->render("product/list.html.twig", ["products"=>$products]);
+        if($this->get("session_manager")->isGranted('ROLE_PRODUCT')){
+            $products = $this->getDoctrine()->getRepository("Entity\Product")->findAll();
+            return $this->render("product/list.html.twig", ["products"=>$products]);
+        }else{
+            return $this->redirect("user_login");
+        }
     }
 
     public function addAction(Request $request)
@@ -30,7 +34,12 @@ class ProductController extends Controller
             $product->setDescription($request->request->get("description"));
             $product->setPriceET($request->request->get("price_et"));
             $product->setVat($request->request->get("vat"));
-            $product->setImage("");
+
+            $file = $request->files->get("file");
+            $filename = $file->getClientOriginalName()."_".time().".".$file->guessExtension();
+            $file->move("img",$filename);
+            $product->setImage($filename);
+
             $brand = $this->getDoctrine()->getRepository("Entity\Brand")->find($request->request->get("brand_id"));
             $product->setBrand($brand);
             $category = $this->getDoctrine()->getRepository("Entity\Category")->find($request->request->get("category_id"));

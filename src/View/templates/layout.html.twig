@@ -35,21 +35,31 @@
                     <li>
                         <a href="/">Boutique</a>
                     </li>
-                    <li>
-                        <a href="/cart">Panier</a>
-                    </li>
-                    <li>
-                        <a href="/order/list">Commandes</a>
-                    </li>
-
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/category/list">Catégories</a></li>
-                            <li><a href="/brand/list">Marques</a></li>
-                            <li><a href="/product/list">Produits</a></li>
-                        </ul>
-                    </li>
+                    {% if session is not null %}
+                        <li>
+                            <a href="/cart">Panier</a>
+                        </li>
+                        <li>
+                            <a href="/order/list">Commandes</a>
+                        </li>
+                        <li>
+                            <a href="/logout">Se déconnecter</a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="/login">Se connecter</a>
+                        </li>
+                    {% endif %}
+                    {% if session is not null and "ROLE_ADMIN" in session.roles %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/category/list">Catégories</a></li>
+                                <li><a href="/brand/list">Marques</a></li>
+                                <li><a href="/product/list">Produits</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
